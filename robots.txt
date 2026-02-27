@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://letremouille.fr/sitemap.xml
+Sitemap: https://renesenses.github.io/LeTremouille-v2/sitemap.xml
