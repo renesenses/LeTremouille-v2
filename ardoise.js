@@ -8,8 +8,6 @@
     var STORAGE_KEY = 'ardoise_shown';
     var CATEGORY_ORDER = ['Formule', 'Entree', 'Entrée', 'Plat', 'Dessert', 'Suggestion'];
 
-    // ===== SESSION GUARD =====
-    if (sessionStorage.getItem(STORAGE_KEY)) return;
 
     // ===== CSV PARSER =====
     function parseCSV(text) {
