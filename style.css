@@ -785,14 +785,15 @@ section {
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
 .ardoise-overlay.active {
@@ -803,93 +804,123 @@ section {
 .ardoise {
     position: relative;
     width: 92%;
-    max-width: 520px;
+    max-width: 540px;
     max-height: 85vh;
     overflow-y: auto;
     background:
-        linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%),
-        linear-gradient(215deg, rgba(255,255,255,0.02) 0%, transparent 40%),
-        #1a2a1a;
-    border: 8px solid #5c3d2e;
-    outline: 3px solid #3e2a1e;
-    border-radius: 6px;
-    padding: 40px 36px 32px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.05);
-    transform: scale(0.9);
+        radial-gradient(ellipse at 20% 0%, rgba(200, 169, 110, 0.06) 0%, transparent 50%),
+        linear-gradient(180deg, #1e2e1e 0%, #1a2a1a 40%, #172417 100%);
+    border: 10px solid;
+    border-image: linear-gradient(160deg, #7a5438, #5c3d2e 40%, #3e2a1e 80%, #5c3d2e) 1;
+    border-radius: 0;
+    outline: 2px solid #2a1c14;
+    padding: 44px 40px 36px;
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.7),
+        0 4px 20px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        inset 0 -1px 0 rgba(0,0,0,0.3);
+    transform: scale(0.92) translateY(20px);
     opacity: 0;
-    transition: transform 0.4s ease, opacity 0.4s ease;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
 }
 
 .ardoise-overlay.active .ardoise {
-    transform: scale(1);
+    transform: scale(1) translateY(0);
     opacity: 1;
+}
+
+/* Chalk dust texture overlay */
+.ardoise::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.5;
 }
 
 .ardoise-close {
     position: absolute;
-    top: 10px;
-    right: 14px;
+    top: 12px;
+    right: 16px;
     background: none;
     border: none;
-    color: #a09888;
-    font-size: 2rem;
+    color: rgba(160, 152, 136, 0.6);
+    font-size: 1.8rem;
     cursor: pointer;
     line-height: 1;
-    transition: color var(--transition);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: color var(--transition), background var(--transition);
 }
 
 .ardoise-close:hover {
     color: #e8e0d0;
+    background: rgba(255,255,255,0.08);
 }
 
 .ardoise-header {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 
 .ardoise-date {
-    font-size: 0.8rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 300;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.25em;
     color: #a09888;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .ardoise-title {
     font-family: var(--font-display);
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 700;
     color: #e8e0d0;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .ardoise-separator {
-    width: 50px;
+    width: 60px;
     height: 2px;
-    background: #c8a96e;
-    margin: 12px auto 0;
+    background: linear-gradient(90deg, transparent, #c8a96e, transparent);
+    margin: 14px auto 0;
 }
 
 .ardoise-category {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 .ardoise-category-title {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.18em;
     color: #c8a96e;
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid rgba(200, 169, 110, 0.25);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.2);
+    text-shadow: 0 0 8px rgba(200, 169, 110, 0.15);
 }
 
 .ardoise-item {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: 6px 0;
+    padding: 7px 0;
+    gap: 12px;
+}
+
+.ardoise-item + .ardoise-item {
+    border-top: 1px dotted rgba(255,255,255,0.06);
 }
 
 .ardoise-item-info {
@@ -901,34 +932,39 @@ section {
     font-family: var(--font-display);
     font-size: 1.05rem;
     color: #e8e0d0;
+    line-height: 1.3;
 }
 
 .ardoise-item-desc {
-    font-size: 0.85rem;
-    color: #a09888;
+    font-size: 0.82rem;
+    color: #8a8070;
     font-style: italic;
+    margin-top: 2px;
+    line-height: 1.4;
 }
 
 .ardoise-item-price {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 1.05rem;
+    font-weight: 700;
     color: #c8a96e;
     white-space: nowrap;
-    margin-left: 16px;
+    flex-shrink: 0;
 }
 
 .ardoise-footer {
     text-align: center;
-    margin-top: 24px;
-    padding-top: 16px;
-    border-top: 1px solid rgba(200, 169, 110, 0.2);
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(200, 169, 110, 0.15);
 }
 
 .ardoise-footer p {
     font-family: var(--font-display);
     font-style: italic;
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: #a09888;
+    letter-spacing: 0.02em;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -994,11 +1030,15 @@ section {
     }
 
     .ardoise {
-        padding: 28px 20px 24px;
+        padding: 32px 24px 28px;
     }
 
     .ardoise-title {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+    }
+
+    .ardoise-category-title {
+        font-size: 0.82rem;
     }
 }
 
