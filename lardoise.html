@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'ardoise du jour — Gestion | Le Tremouille</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Lato', Arial, sans-serif;
+            --color-bg: #0a0a0a;
+            --color-bg-alt: #141414;
+            --color-bg-card: #1a1a1a;
+            --color-text: #f5f0eb;
+            --color-text-muted: #a09888;
+            --color-accent: #c8a96e;
+            --color-accent-dim: rgba(200, 169, 110, 0.25);
+            --color-success: #4caf50;
+            --color-error: #e74c3c;
+            --radius: 6px;
+            --transition: 0.3s ease;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ===== LOGIN SCREEN ===== */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--color-bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 48px 40px;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-card h1 {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .login-card p {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 28px;
+        }
+
+        .login-card label {
+            display: block;
+            text-align: left;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-bottom: 6px;
+        }
+
+        .login-card input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--color-bg);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius);
+            color: var(--color-text);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+            transition: border-color var(--transition);
+        }
+
+        .login-card input[type="password"]:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .login-error {
+            color: var(--color-error);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            min-height: 1.2em;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border: none;
+            border-radius: var(--radius);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: #1a1a1a;
+            width: 100%;
+        }
+
+        .btn-primary:hover { background: #d4b87a; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: var(--color-text);
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .btn-secondary:hover { background: rgba(255,255,255,0.14); }
+
+        .btn-danger {
+            background: none;
+            color: var(--color-text-muted);
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        .btn-danger:hover { color: var(--color-error); }
+
+        /* ===== ADMIN LAYOUT ===== */
+        .admin { display: none; }
+        .admin.visible { display: block; }
+
+        .admin-header {
+            background: var(--color-bg-alt);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .admin-header h1 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            color: var(--color-text);
+        }
+
+        .admin-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-header a {
+            color: var(--color-accent);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .admin-header a:hover { text-decoration: underline; }
+
+        .admin-body {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+        }
+
+        /* ===== SECTIONS ===== */
+        .admin-section {
+            background: var(--color-bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .admin-section h2 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            color: var(--color-accent);
+            margin-bottom: 16px;
+        }
+
+        .admin-section h3 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--color-text);
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+
+        .admin-section p, .admin-section li {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .admin-section ul, .admin-section ol {
+            padding-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .admin-section li { margin-bottom: 4px; }
+
+        .admin-section code {
+            background: rgba(255,255,255,0.06);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            color: var(--color-accent);
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .field-group {
+            margin-bottom: 16px;
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-bottom: 6px;
+        }
+
+        .field-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .field-row input {
+            flex: 1;
+        }
+
+        .field-row .btn {
+            white-space: nowrap;
+            padding: 12px 20px;
+        }
+
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--color-bg);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius);
+            color: var(--color-text);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: border-color var(--transition);
+        }
+
+        input[type="text"]:focus, input[type="url"]:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        /* ===== BADGE ===== */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--color-success);
+        }
+
+        .badge-error {
+            background: rgba(231, 76, 60, 0.15);
+            color: var(--color-error);
+        }
+
+        .sheet-status {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        .sheet-id-display {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            word-break: break-all;
+        }
+
+        /* ===== PREVIEW ===== */
+        .preview-actions {
+            margin-bottom: 20px;
+        }
+
+        .preview-container {
+            display: none;
+        }
+
+        .preview-container.visible {
+            display: block;
+        }
+
+        .preview-empty {
+            text-align: center;
+            padding: 32px 20px;
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+
+        /* Ardoise styles (mirrored from style.css) */
+        .preview-ardoise {
+            position: relative;
+            max-width: 520px;
+            margin: 0 auto;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%),
+                linear-gradient(215deg, rgba(255,255,255,0.02) 0%, transparent 40%),
+                #1a2a1a;
+            border: 8px solid #5c3d2e;
+            outline: 3px solid #3e2a1e;
+            border-radius: 6px;
+            padding: 40px 36px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .ardoise-header { text-align: center; margin-bottom: 24px; }
+        .ardoise-date { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em; color: #a09888; margin-bottom: 8px; }
+        .ardoise-title { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: #e8e0d0; }
+        .ardoise-separator { width: 50px; height: 2px; background: #c8a96e; margin: 12px auto 0; }
+        .ardoise-category { margin-bottom: 20px; }
+        .ardoise-category-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: #c8a96e; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(200, 169, 110, 0.25); }
+        .ardoise-item { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; }
+        .ardoise-item-info { flex: 1; min-width: 0; }
+        .ardoise-item-name { font-family: var(--font-display); font-size: 1.05rem; color: #e8e0d0; }
+        .ardoise-item-desc { font-size: 0.85rem; color: #a09888; font-style: italic; }
+        .ardoise-item-price { font-family: var(--font-display); font-size: 1rem; color: #c8a96e; white-space: nowrap; margin-left: 16px; }
+        .ardoise-footer { text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(200, 169, 110, 0.2); }
+        .ardoise-footer p { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: #a09888; }
+
+        /* ===== DATES TABLE ===== */
+        .dates-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+
+        .dates-table th {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 2px solid var(--color-accent-dim);
+            color: var(--color-accent);
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .dates-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: var(--color-text-muted);
+        }
+
+        .dates-table tr.today td {
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        /* ===== INSTRUCTIONS ===== */
+        .instructions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 0.85rem;
+        }
+
+        .instructions-table th, .instructions-table td {
+            padding: 8px 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            text-align: left;
+        }
+
+        .instructions-table th {
+            background: rgba(255,255,255,0.04);
+            color: var(--color-accent);
+            font-weight: 600;
+        }
+
+        .instructions-table td {
+            color: var(--color-text-muted);
+        }
+
+        /* ===== LOADING ===== */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-top-color: var(--color-accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .login-card { padding: 32px 24px; }
+            .admin-header { padding: 14px 16px; }
+            .admin-header h1 { font-size: 1.1rem; }
+            .admin-body { padding: 20px 16px 40px; }
+            .admin-section { padding: 20px 16px; }
+            .field-row { flex-direction: column; }
+            .field-row .btn { width: 100%; }
+            .preview-ardoise { padding: 28px 20px 24px; }
+            .ardoise-title { font-size: 1.5rem; }
+            .dates-table, .instructions-table { font-size: 0.8rem; }
+            .dates-table th, .dates-table td,
+            .instructions-table th, .instructions-table td { padding: 6px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <h1>L'ardoise du jour</h1>
+            <p>Connectez-vous avec votre token GitHub pour acceder a la gestion.</p>
+            <label for="tokenInput">Personal Access Token GitHub</label>
+            <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+            <div class="login-error" id="loginError"></div>
+            <button class="btn btn-primary" id="loginBtn">Connexion</button>
+        </div>
+    </div>
+
+    <!-- ===== ADMIN PANEL ===== -->
+    <div id="adminPanel" class="admin">
+
+        <!-- Header -->
+        <header class="admin-header">
+            <h1>L'ardoise du jour — Gestion</h1>
+            <div class="admin-header-actions">
+                <a href="index.html">Retour au site</a>
+                <button class="btn btn-danger" id="logoutBtn">Deconnexion</button>
+            </div>
+        </header>
+
+        <div class="admin-body">
+
+            <!-- Configuration Sheet -->
+            <section class="admin-section">
+                <h2>Configuration du Google Sheet</h2>
+                <div class="field-group">
+                    <label for="sheetInput">URL du Google Sheet ou ID</label>
+                    <div class="field-row">
+                        <input type="text" id="sheetInput" placeholder="https://docs.google.com/spreadsheets/d/xxx/edit ou juste l'ID">
+                        <button class="btn btn-secondary" id="saveSheetBtn">Enregistrer</button>
+                    </div>
+                </div>
+                <div class="sheet-status" id="sheetStatus"></div>
+            </section>
+
+            <!-- Preview -->
+            <section class="admin-section">
+                <h2>Previsualisation</h2>
+                <div class="preview-actions">
+                    <button class="btn btn-secondary" id="previewBtn">Previsualiser l'ardoise du jour</button>
+                </div>
+                <div class="preview-container" id="previewContainer">
+                    <div id="previewResult"></div>
+                </div>
+                <div id="datesContainer"></div>
+            </section>
+
+            <!-- Instructions -->
+            <section class="admin-section">
+                <h2>Instructions</h2>
+
+                <h3>1. Creer le Google Sheet</h3>
+                <p>Creez un nouveau Google Sheet avec les colonnes suivantes en premiere ligne :</p>
+                <table class="instructions-table">
+                    <thead>
+                        <tr><th>Colonne</th><th>Description</th><th>Exemple</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>Date</code></td><td>Date du jour ou le plat sera affiche</td><td>27/02/2026</td></tr>
+                        <tr><td><code>Categorie</code></td><td>Type de plat</td><td>Entree, Plat, Dessert, Formule, Suggestion</td></tr>
+                        <tr><td><code>Nom</code></td><td>Nom du plat</td><td>Veloute de potiron</td></tr>
+                        <tr><td><code>Description</code></td><td>Description courte (optionnel)</td><td>Creme fraiche, noisettes torrefifiees</td></tr>
+                        <tr><td><code>Prix</code></td><td>Prix en euros (chiffre seul)</td><td>9</td></tr>
+                        <tr><td><code>Actif</code></td><td>OUI pour afficher, NON pour masquer</td><td>OUI</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>2. Publier le Sheet</h3>
+                <ol>
+                    <li>Dans Google Sheets, allez dans <strong>Fichier &rarr; Partager &rarr; Publier sur le Web</strong></li>
+                    <li>Selectionnez <strong>Document entier</strong> et le format <strong>CSV (.csv)</strong></li>
+                    <li>Cliquez sur <strong>Publier</strong></li>
+                </ol>
+
+                <h3>3. Partager le Sheet</h3>
+                <ol>
+                    <li>Cliquez sur le bouton <strong>Partager</strong> en haut a droite</li>
+                    <li>Dans "Acces general", selectionnez <strong>Tous les utilisateurs disposant du lien</strong></li>
+                    <li>Le role doit etre <strong>Lecteur</strong></li>
+                </ol>
+
+                <h3>4. Configurer l'ID</h3>
+                <p>Copiez l'URL du Sheet depuis la barre d'adresse de votre navigateur et collez-la dans le champ "Configuration" ci-dessus. L'ID sera extrait automatiquement.</p>
+
+                <h3>Formats de dates acceptes</h3>
+                <ul>
+                    <li><code>JJ/MM/AAAA</code> &mdash; ex : 27/02/2026</li>
+                    <li><code>AAAA-MM-JJ</code> &mdash; ex : 2026-02-27</li>
+                </ul>
+
+                <h3>Colonne Actif</h3>
+                <p>Mettez <code>OUI</code> pour afficher un plat, <code>NON</code> pour le masquer temporairement sans le supprimer.</p>
+            </section>
+
+        </div>
+    </div>
+
+<script>
+(function () {
+    'use strict';
+
+    // ===== DOM REFS =====
+    var loginScreen = document.getElementById('loginScreen');
+    var adminPanel = document.getElementById('adminPanel');
+    var tokenInput = document.getElementById('tokenInput');
+    var loginBtn = document.getElementById('loginBtn');
+    var loginError = document.getElementById('loginError');
+    var logoutBtn = document.getElementById('logoutBtn');
+    var sheetInput = document.getElementById('sheetInput');
+    var saveSheetBtn = document.getElementById('saveSheetBtn');
+    var sheetStatus = document.getElementById('sheetStatus');
+    var previewBtn = document.getElementById('previewBtn');
+    var previewContainer = document.getElementById('previewContainer');
+    var previewResult = document.getElementById('previewResult');
+    var datesContainer = document.getElementById('datesContainer');
+
+    var CATEGORY_ORDER = ['Formule', 'Entree', 'Entree', 'Plat', 'Dessert', 'Suggestion'];
+
+    // ===== AUTH =====
+    function verifyToken(token, cb) {
+        fetch('https://api.github.com/repos/renesenses/LeTremouille', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        }).then(function (res) {
+            cb(res.ok);
+        }).catch(function () {
+            cb(false);
+        });
+    }
+
+    function showAdmin() {
+        loginScreen.style.display = 'none';
+        adminPanel.classList.add('visible');
+        updateSheetStatus();
+    }
+
+    function showLogin() {
+        adminPanel.classList.remove('visible');
+        loginScreen.style.display = 'flex';
+        loginError.textContent = '';
+        tokenInput.value = '';
+    }
+
+    function setLoading(btn, loading) {
+        if (loading) {
+            btn.disabled = true;
+            btn.dataset.origText = btn.textContent;
+            btn.innerHTML = '<span class="spinner"></span>Verification...';
+        } else {
+            btn.disabled = false;
+            btn.textContent = btn.dataset.origText || 'Connexion';
+        }
+    }
+
+    loginBtn.addEventListener('click', function () {
+        var token = tokenInput.value.trim();
+        if (!token) {
+            loginError.textContent = 'Veuillez entrer un token.';
+            return;
+        }
+        loginError.textContent = '';
+        setLoading(loginBtn, true);
+        verifyToken(token, function (ok) {
+            setLoading(loginBtn, false);
+            if (ok) {
+                sessionStorage.setItem('ardoise_github_token', token);
+                showAdmin();
+            } else {
+                loginError.textContent = 'Token invalide ou acces insuffisant au repo.';
+            }
+        });
+    });
+
+    tokenInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') loginBtn.click();
+    });
+
+    logoutBtn.addEventListener('click', function () {
+        sessionStorage.removeItem('ardoise_github_token');
+        showLogin();
+    });
+
+    // Auto-login from sessionStorage
+    (function () {
+        var saved = sessionStorage.getItem('ardoise_github_token');
+        if (saved) {
+            setLoading(loginBtn, true);
+            verifyToken(saved, function (ok) {
+                setLoading(loginBtn, false);
+                if (ok) {
+                    showAdmin();
+                } else {
+                    sessionStorage.removeItem('ardoise_github_token');
+                }
+            });
+        }
+    })();
+
+    // ===== SHEET CONFIG =====
+    function extractSheetId(input) {
+        input = input.trim();
+        // Try to extract from URL
+        var match = input.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+        if (match) return match[1];
+        // If it looks like a raw ID (no slashes, no spaces, reasonable length)
+        if (/^[a-zA-Z0-9_-]{20,}$/.test(input)) return input;
+        return null;
+    }
+
+    function updateSheetStatus() {
+        var id = localStorage.getItem('ardoise_sheet_id');
+        if (id) {
+            sheetStatus.innerHTML = '<span class="badge badge-success">Configure</span> <span class="sheet-id-display">' + escapeHTML(id) + '</span>';
+            sheetInput.value = id;
+        } else {
+            sheetStatus.innerHTML = '<span class="badge badge-error">Non configure</span>';
+            sheetInput.value = '';
+        }
+    }
+
+    saveSheetBtn.addEventListener('click', function () {
+        var raw = sheetInput.value;
+        var id = extractSheetId(raw);
+        if (!id) {
+            sheetStatus.innerHTML = '<span class="badge badge-error">URL ou ID invalide</span>';
+            return;
+        }
+        localStorage.setItem('ardoise_sheet_id', id);
+        updateSheetStatus();
+    });
+
+    // ===== CSV PARSER =====
+    function parseCSV(text) {
+        var rows = [];
+        var current = '';
+        var inQuotes = false;
+        var row = [];
+
+        for (var i = 0; i < text.length; i++) {
+            var ch = text[i];
+            if (inQuotes) {
+                if (ch === '"') {
+                    if (i + 1 < text.length && text[i + 1] === '"') {
+                        current += '"';
+                        i++;
+                    } else {
+                        inQuotes = false;
+                    }
+                } else {
+                    current += ch;
+                }
+            } else if (ch === '"') {
+                inQuotes = true;
+            } else if (ch === ',') {
+                row.push(current.trim());
+                current = '';
+            } else if (ch === '\n' || ch === '\r') {
+                if (ch === '\r' && i + 1 < text.length && text[i + 1] === '\n') i++;
+                row.push(current.trim());
+                if (row.length > 1 || row[0] !== '') rows.push(row);
+                row = [];
+                current = '';
+            } else {
+                current += ch;
+            }
+        }
+        row.push(current.trim());
+        if (row.length > 1 || row[0] !== '') rows.push(row);
+        return rows;
+    }
+
+    // ===== DATE HELPERS =====
+    function todayStr() {
+        var d = new Date();
+        var mm = String(d.getMonth() + 1).padStart(2, '0');
+        var dd = String(d.getDate()).padStart(2, '0');
+        return d.getFullYear() + '-' + mm + '-' + dd;
+    }
+
+    function normalizeDate(raw) {
+        if (!raw) return '';
+        raw = raw.trim();
+        var slashMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (slashMatch) {
+            return slashMatch[3] + '-' + slashMatch[2].padStart(2, '0') + '-' + slashMatch[1].padStart(2, '0');
+        }
+        if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+        return raw;
+    }
+
+    function formatDateFR(dateStr) {
+        if (!dateStr) {
+            var d = new Date();
+        } else {
+            var parts = dateStr.split('-');
+            var d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        }
+        var jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+        var mois = ['janvier', 'fevrier', 'mars', 'avril', 'mai', 'juin',
+            'juillet', 'aout', 'septembre', 'octobre', 'novembre', 'decembre'];
+        return jours[d.getDay()] + ' ' + d.getDate() + ' ' + mois[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    function categoryRank(name) {
+        var normalized = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        for (var i = 0; i < CATEGORY_ORDER.length; i++) {
+            var orderNorm = CATEGORY_ORDER[i].normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            if (normalized.toLowerCase() === orderNorm.toLowerCase()) return i;
+        }
+        return CATEGORY_ORDER.length;
+    }
+
+    function escapeHTML(str) {
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // ===== PREVIEW =====
+    function renderArdoise(items, dateLabel) {
+        var groups = {};
+        items.forEach(function (item) {
+            var cat = item.categorie || 'Suggestion';
+            if (!groups[cat]) groups[cat] = [];
+            groups[cat].push(item);
+        });
+
+        var sortedCats = Object.keys(groups).sort(function (a, b) {
+            return categoryRank(a) - categoryRank(b);
+        });
+
+        var html = '<div class="preview-ardoise">';
+        html += '<div class="ardoise-header">';
+        html += '<p class="ardoise-date">' + escapeHTML(dateLabel) + '</p>';
+        html += '<h2 class="ardoise-title">L\'ardoise du jour</h2>';
+        html += '<div class="ardoise-separator"></div>';
+        html += '</div>';
+
+        sortedCats.forEach(function (cat) {
+            html += '<div class="ardoise-category">';
+            html += '<h3 class="ardoise-category-title">' + escapeHTML(cat) + '</h3>';
+            groups[cat].forEach(function (item) {
+                html += '<div class="ardoise-item">';
+                html += '<div class="ardoise-item-info">';
+                html += '<div class="ardoise-item-name">' + escapeHTML(item.nom) + '</div>';
+                if (item.description) {
+                    html += '<div class="ardoise-item-desc">' + escapeHTML(item.description) + '</div>';
+                }
+                html += '</div>';
+                if (item.prix) {
+                    html += '<span class="ardoise-item-price">' + escapeHTML(item.prix) + '&euro;</span>';
+                }
+                html += '</div>';
+            });
+            html += '</div>';
+        });
+
+        html += '<div class="ardoise-footer"><p>Bon appetit !</p></div>';
+        html += '</div>';
+        return html;
+    }
+
+    function fetchAndPreview() {
+        var sheetId = localStorage.getItem('ardoise_sheet_id');
+        if (!sheetId) {
+            previewResult.innerHTML = '<p class="preview-empty">Aucun Google Sheet configure. Renseignez l\'ID ci-dessus.</p>';
+            previewContainer.classList.add('visible');
+            return;
+        }
+
+        var csvUrl = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv';
+        previewBtn.disabled = true;
+        previewBtn.innerHTML = '<span class="spinner"></span>Chargement...';
+
+        fetch(csvUrl)
+            .then(function (res) {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.text();
+            })
+            .then(function (text) {
+                var rows = parseCSV(text);
+                if (rows.length < 2) {
+                    previewResult.innerHTML = '<p class="preview-empty">Le Sheet est vide ou ne contient pas de donnees.</p>';
+                    previewContainer.classList.add('visible');
+                    return;
+                }
+
+                var headers = rows[0].map(function (h) {
+                    return h.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                });
+                var colDate = headers.indexOf('date');
+                var colCat = headers.indexOf('categorie');
+                var colNom = headers.indexOf('nom');
+                var colDesc = headers.indexOf('description');
+                var colPrix = headers.indexOf('prix');
+                var colActif = headers.indexOf('actif');
+
+                var today = todayStr();
+                var todayItems = [];
+                var dateMap = {}; // date -> { count, active }
+
+                for (var r = 1; r < rows.length; r++) {
+                    var row = rows[r];
+                    var actif = colActif >= 0 ? (row[colActif] || '').toUpperCase().trim() : 'OUI';
+                    var dateVal = colDate >= 0 ? normalizeDate(row[colDate]) : '';
+
+                    // Collect all dates for summary
+                    if (dateVal) {
+                        if (!dateMap[dateVal]) dateMap[dateVal] = { total: 0, active: 0 };
+                        dateMap[dateVal].total++;
+                        if (actif === 'OUI') dateMap[dateVal].active++;
+                    }
+
+                    // Filter today + active for preview
+                    if (actif !== 'OUI') continue;
+                    if (dateVal !== today) continue;
+
+                    todayItems.push({
+                        categorie: colCat >= 0 ? (row[colCat] || '').trim() : '',
+                        nom: colNom >= 0 ? (row[colNom] || '').trim() : '',
+                        description: colDesc >= 0 ? (row[colDesc] || '').trim() : '',
+                        prix: colPrix >= 0 ? (row[colPrix] || '').trim() : ''
+                    });
+                }
+
+                // Render preview
+                if (todayItems.length > 0) {
+                    previewResult.innerHTML = renderArdoise(todayItems, formatDateFR());
+                } else {
+                    previewResult.innerHTML = '<p class="preview-empty">Aucun plat actif pour aujourd\'hui (' + escapeHTML(formatDateFR()) + ').</p>';
+                }
+                previewContainer.classList.add('visible');
+
+                // Render dates table
+                var sortedDates = Object.keys(dateMap).sort();
+                if (sortedDates.length > 0) {
+                    var tableHtml = '<h3 style="font-family:var(--font-display);font-size:1rem;color:var(--color-accent);margin-top:24px;margin-bottom:8px;">Dates trouvees dans le Sheet</h3>';
+                    tableHtml += '<table class="dates-table">';
+                    tableHtml += '<thead><tr><th>Date</th><th>Plats actifs</th><th>Total</th></tr></thead>';
+                    tableHtml += '<tbody>';
+                    sortedDates.forEach(function (d) {
+                        var isToday = d === today;
+                        tableHtml += '<tr' + (isToday ? ' class="today"' : '') + '>';
+                        tableHtml += '<td>' + escapeHTML(formatDateFR(d)) + (isToday ? ' (aujourd\'hui)' : '') + '</td>';
+                        tableHtml += '<td>' + dateMap[d].active + '</td>';
+                        tableHtml += '<td>' + dateMap[d].total + '</td>';
+                        tableHtml += '</tr>';
+                    });
+                    tableHtml += '</tbody></table>';
+                    datesContainer.innerHTML = tableHtml;
+                } else {
+                    datesContainer.innerHTML = '';
+                }
+            })
+            .catch(function (err) {
+                previewResult.innerHTML = '<p class="preview-empty">Erreur lors du chargement : ' + escapeHTML(err.message) + '</p>';
+                previewContainer.classList.add('visible');
+                datesContainer.innerHTML = '';
+            })
+            .finally(function () {
+                previewBtn.disabled = false;
+                previewBtn.textContent = 'Previsualiser l\'ardoise du jour';
+            });
+    }
+
+    previewBtn.addEventListener('click', fetchAndPreview);
+
+})();
+</script>
+
+</body>
+</html>
