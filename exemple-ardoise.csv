@@ -1,0 +1,15 @@
+Date,Categorie,Nom,Description,Prix,Actif
+27/02/2026,Formule,Formule du midi,Entree + Plat ou Plat + Dessert,16,OUI
+27/02/2026,Entree,Veloute de potiron,Creme fraiche et noisettes torrefiees,9,OUI
+27/02/2026,Entree,Salade de chevre chaud,Miel et noix de Grenoble,10,OUI
+27/02/2026,Plat,Parmentier de canard,Puree maison et jus reduit,17,OUI
+27/02/2026,Plat,Dos de cabillaud,Beurre blanc et riz pilaf,18,OUI
+27/02/2026,Dessert,Moelleux au chocolat,Coeur coulant et creme anglaise,9,OUI
+27/02/2026,Dessert,Creme brulee,A la vanille de Madagascar,8,OUI
+28/02/2026,Entree,Oeuf cocotte,Champignons et creme de truffe,11,OUI
+28/02/2026,Plat,Souris d'agneau,Jus au romarin et gratin dauphinois,22,OUI
+28/02/2026,Plat,Risotto aux crevettes,Parmesan et basilic frais,19,OUI
+28/02/2026,Dessert,Tarte tatin,Creme fouettee vanillee,9,OUI
+01/03/2026,Plat,Blanquette de veau,A l'ancienne avec riz basmati,18,OUI
+01/03/2026,Plat,Filet de bar,Sauce vierge et legumes grilles,20,NON
+01/03/2026,Dessert,Ile flottante,Caramel et pralin,9,OUI
