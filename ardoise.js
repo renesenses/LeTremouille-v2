@@ -3,7 +3,7 @@
 
     // ===== CONFIGURATION =====
     var SHEET_ID = localStorage.getItem('ardoise_sheet_id') || 'VOTRE_SHEET_ID_ICI';
-    var CSV_URL = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv';
+    var CSV_URL = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv';
     var DELAY_MS = 1500;
     var STORAGE_KEY = 'ardoise_shown';
     var CATEGORY_ORDER = ['Formule', 'Entree', 'Entrée', 'Plat', 'Dessert', 'Suggestion'];
